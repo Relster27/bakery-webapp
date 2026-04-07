@@ -801,6 +801,44 @@
             align-items: stretch;
         }
 
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .dashboard-stat {
+            min-height: 124px;
+            display: grid;
+            gap: 0.8rem;
+            align-content: space-between;
+            padding: 1.15rem 1.15rem 1.05rem;
+        }
+
+        .dashboard-stat small {
+            display: block;
+            max-width: 18ch;
+            font-size: 0.76rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .dashboard-stat-value {
+            display: block;
+            font-family: "Plus Jakarta Sans", "Manrope", sans-serif;
+            font-size: clamp(1.6rem, 2vw, 2rem);
+            font-weight: 800;
+            line-height: 1.08;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            word-break: break-word;
+        }
+
+        .dashboard-stat-value-money {
+            font-size: clamp(1.35rem, 1.75vw, 1.72rem);
+        }
+
         .dashboard-panel {
             display: grid;
             gap: 1rem;
@@ -1237,6 +1275,10 @@
                 grid-template-columns: 1fr 1fr;
             }
 
+            .dashboard-stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .dashboard-row {
                 grid-template-columns: 1fr;
             }
@@ -1269,6 +1311,12 @@
             .hero,
             .card {
                 padding: 1.1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
