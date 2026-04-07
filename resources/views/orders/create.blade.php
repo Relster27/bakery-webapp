@@ -85,7 +85,15 @@
 
                             <div class="product-meta">
                                 <span class="product-label">Price</span>
-                                <span class="product-value">Rp {{ number_format((float) $product->price, 0, ',', '.') }}</span>
+                                @if ($product->has_active_discount ?? false)
+                                    <div class="price-stack">
+                                        <span class="price-current">Rp {{ number_format((float) $product->effective_price, 0, ',', '.') }}</span>
+                                        <span class="price-old">Rp {{ number_format((float) $product->original_price, 0, ',', '.') }}</span>
+                                        <span class="discount-note">{{ rtrim(rtrim(number_format((float) $product->discount_percent, 2, '.', ''), '0'), '.') }}% off</span>
+                                    </div>
+                                @else
+                                    <span class="product-value">Rp {{ number_format((float) $product->price, 0, ',', '.') }}</span>
+                                @endif
                             </div>
 
                             <div class="product-meta">

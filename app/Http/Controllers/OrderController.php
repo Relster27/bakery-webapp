@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Services\OrderPlacementService;
+use App\Services\PricingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -11,7 +12,8 @@ use Illuminate\View\View;
 class OrderController extends Controller
 {
     public function __construct(
-        protected OrderPlacementService $orderPlacementService
+        protected OrderPlacementService $orderPlacementService,
+        protected PricingService $pricingService
     ) {
     }
 
@@ -30,15 +32,16 @@ class OrderController extends Controller
     public function create(): View
     {
         $bakery = $this->currentBakery();
+        $products = $bakery->products()
+            ->with('inventory')
+            ->where('is_active', true)
+            ->orderBy('category')
+            ->orderBy('name')
+            ->get();
 
         return view('orders.create', [
             'customers' => $bakery->customers()->orderBy('name')->get(),
-            'products' => $bakery->products()
-                ->with('inventory')
-                ->where('is_active', true)
-                ->orderBy('category')
-                ->orderBy('name')
-                ->get(),
+            'products' => $this->pricingService->decorateProducts($bakery, $products),
         ]);
     }
 

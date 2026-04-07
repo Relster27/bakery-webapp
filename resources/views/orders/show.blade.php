@@ -11,14 +11,19 @@
                 </p>
                 <div class="actions">
                     <span class="badge badge-hero">{{ strtoupper($order->order_status) }}</span>
-                    <span class="badge badge-hero">Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
+                    <span class="badge badge-hero">Paid Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
+                    @if ((float) $order->discount_total > 0)
+                        <span class="badge badge-hero">Saved Rp {{ number_format((float) $order->discount_total, 0, ',', '.') }}</span>
+                    @endif
                 </div>
             </div>
 
             <div class="hero-aside">
                 <span class="eyebrow">Quick Snapshot</span>
                 <p><strong>Items:</strong> {{ $order->items->sum('quantity') }}</p>
+                <p><strong>Gross Before Discount:</strong> Rp {{ number_format($order->grossBeforeDiscount(), 0, ',', '.') }}</p>
                 <p><strong>Platform Fee:</strong> Rp {{ number_format((float) $order->platform_fee, 0, ',', '.') }}</p>
+                <p><strong>Net After Fee:</strong> Rp {{ number_format($order->netAfterFees(), 0, ',', '.') }}</p>
                 <p><strong>Pickup:</strong> {{ $order->pickup_time?->format('d M Y H:i') ?? 'Not scheduled' }}</p>
             </div>
         </div>
@@ -53,8 +58,24 @@
                     <div class="summary-value">{{ $order->expires_at?->format('d M Y H:i') ?? '-' }}</div>
                 </div>
                 <div class="summary-row">
+                    <div class="summary-key">Gross Before Discount</div>
+                    <div class="summary-value">Rp {{ number_format($order->grossBeforeDiscount(), 0, ',', '.') }}</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-key">Discount Given</div>
+                    <div class="summary-value">Rp {{ number_format((float) $order->discount_total, 0, ',', '.') }}</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-key">Customer Paid</div>
+                    <div class="summary-value">Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</div>
+                </div>
+                <div class="summary-row">
                     <div class="summary-key">Platform Fee</div>
                     <div class="summary-value">Rp {{ number_format((float) $order->platform_fee, 0, ',', '.') }}</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-key">Net After Fee</div>
+                    <div class="summary-value">Rp {{ number_format($order->netAfterFees(), 0, ',', '.') }}</div>
                 </div>
                 <div class="summary-row">
                     <div class="summary-key">Notes</div>
@@ -118,6 +139,9 @@
 
     <section class="card" style="margin-top: 1rem;">
         <h2>Ordered Items</h2>
+        @if ((float) $order->discount_total > 0)
+            <p class="muted">This order used at least one active flash-sale rule when it was created.</p>
+        @endif
         <div class="item-list">
             @foreach ($order->items as $item)
                 <article class="item-row">

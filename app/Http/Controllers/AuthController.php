@@ -8,7 +8,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -56,11 +55,14 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        $publicSlug = $this->makePublicSlug($validated['shop_name']);
+
         Bakery::create([
             'user_id' => $user->id,
             'shop_name' => $validated['shop_name'],
+            'public_slug' => $publicSlug,
             'revenue_ledger' => 0,
-            'qr_token' => $this->makeQrToken($validated['shop_name']),
+            'qr_token' => $publicSlug,
         ]);
 
         Auth::login($user);
@@ -79,11 +81,11 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    protected function makeQrToken(string $shopName): string
+    protected function makePublicSlug(string $shopName): string
     {
         do {
-            $token = Str::slug($shopName).'-'.Str::lower(Str::random(6));
-        } while (Bakery::query()->where('qr_token', $token)->exists());
+            $token = \Illuminate\Support\Str::slug($shopName).'-'.\Illuminate\Support\Str::lower(\Illuminate\Support\Str::random(6));
+        } while (Bakery::query()->where('public_slug', $token)->exists());
 
         return $token;
     }

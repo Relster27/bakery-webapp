@@ -18,6 +18,7 @@
                 <?php if($bakery->email): ?>
                     <p><strong>Email:</strong> <?php echo e($bakery->email); ?></p>
                 <?php endif; ?>
+                <p><a href="<?php echo e(route('menu.custom-cake.show', $bakery->public_slug)); ?>">Need a custom cake instead?</a></p>
             </div>
         </div>
     </section>
@@ -25,36 +26,50 @@
     <section class="grid grid-2">
         <div class="card">
             <h2>Live Menu</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                </tr>
-                </thead>
-                <tbody>
+            <p class="muted">Flash-sale rules apply automatically when their time window is active.</p>
+            <div class="product-list" style="margin-top: 1rem;">
                 <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <tr>
-                        <td>
+                    <article class="product-row">
+                        <div class="product-main">
                             <strong><?php echo e($product->name); ?></strong><br>
                             <span class="muted"><?php echo e($product->category); ?></span>
-                        </td>
-                        <td>Rp <?php echo e(number_format((float) $product->price, 0, ',', '.')); ?></td>
-                        <td><?php echo e($product->inventory?->quantity_on_hand ?? 0); ?></td>
-                    </tr>
+                        </div>
+                        <div class="product-meta">
+                            <span class="product-label">Price</span>
+                            <?php if($product->has_active_discount ?? false): ?>
+                                <div class="price-stack">
+                                    <span class="price-current">Rp <?php echo e(number_format((float) $product->effective_price, 0, ',', '.')); ?></span>
+                                    <span class="price-old">Rp <?php echo e(number_format((float) $product->original_price, 0, ',', '.')); ?></span>
+                                    <span class="discount-note"><?php echo e($product->discount_name); ?></span>
+                                </div>
+                            <?php else: ?>
+                                <span class="product-value">Rp <?php echo e(number_format((float) $product->price, 0, ',', '.')); ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="product-meta">
+                            <span class="product-label">Stock</span>
+                            <span class="product-value"><?php echo e($product->inventory?->quantity_on_hand ?? 0); ?></span>
+                        </div>
+                        <div class="product-meta">
+                            <span class="product-label">Status</span>
+                            <span class="badge <?php echo e(($product->inventory?->quantity_on_hand ?? 0) > 0 ? '' : 'badge-muted'); ?>">
+                                <?php echo e(($product->inventory?->quantity_on_hand ?? 0) > 0 ? 'AVAILABLE' : 'OUT OF STOCK'); ?>
+
+                            </span>
+                        </div>
+                    </article>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </tbody>
-            </table>
+            </div>
         </div>
 
         <div class="card stack">
             <div>
                 <h2>Place a Pre-order</h2>
                 <p class="muted">Enter customer details, choose pickup time, then fill only the quantities you want.</p>
+                <p class="helper-text">Planning a celebration cake? <a href="<?php echo e(route('menu.custom-cake.show', $bakery->public_slug)); ?>">Use the custom cake configurator</a>. <?php echo e($cakeRequestCount); ?> guided request(s) already scheduled.</p>
             </div>
 
-            <form action="<?php echo e(route('menu.order.store', $bakery->qr_token)); ?>" method="POST" class="stack">
+            <form action="<?php echo e(route('menu.order.store', $bakery->public_slug)); ?>" method="POST" class="stack">
                 <?php echo csrf_field(); ?>
 
                 <div class="form-grid">
@@ -86,32 +101,42 @@
 
                 <div class="card subcard">
                     <h3>Choose Products</h3>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Available</th>
-                            <th>Quantity</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                    <div class="selector-list">
                         <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <tr>
-                                <td><?php echo e($product->name); ?></td>
-                                <td><?php echo e($product->inventory?->quantity_on_hand ?? 0); ?></td>
-                                <td>
+                            <article class="selector-row">
+                                <div class="product-main">
+                                    <strong><?php echo e($product->name); ?></strong>
+                                    <p class="product-copy"><?php echo e($product->category); ?></p>
+                                </div>
+                                <div class="product-meta">
+                                    <span class="product-label">Price</span>
+                                    <?php if($product->has_active_discount ?? false): ?>
+                                        <div class="price-stack">
+                                            <span class="price-current">Rp <?php echo e(number_format((float) $product->effective_price, 0, ',', '.')); ?></span>
+                                            <span class="price-old">Rp <?php echo e(number_format((float) $product->original_price, 0, ',', '.')); ?></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="product-value">Rp <?php echo e(number_format((float) $product->price, 0, ',', '.')); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="product-meta">
+                                    <span class="product-label">Available</span>
+                                    <span class="product-value"><?php echo e($product->inventory?->quantity_on_hand ?? 0); ?></span>
+                                </div>
+                                <div class="selector-quantity">
+                                    <label for="public_quantity_<?php echo e($product->id); ?>">Quantity</label>
                                     <input
+                                        id="public_quantity_<?php echo e($product->id); ?>"
                                         name="quantities[<?php echo e($product->id); ?>]"
                                         type="number"
                                         min="0"
                                         max="<?php echo e($product->inventory?->quantity_on_hand ?? 0); ?>"
                                         value="<?php echo e(old('quantities.'.$product->id, 0)); ?>"
                                     >
-                                </td>
-                            </tr>
+                                </div>
+                            </article>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
 
                 <button class="button" type="submit">Send Pre-order</button>

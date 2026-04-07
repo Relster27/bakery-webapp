@@ -20,6 +20,7 @@
                 @if ($bakery->email)
                     <p><strong>Email:</strong> {{ $bakery->email }}</p>
                 @endif
+                <p><a href="{{ route('menu.custom-cake.show', $bakery->public_slug) }}">Need a custom cake instead?</a></p>
             </div>
         </div>
     </section>
@@ -27,36 +28,49 @@
     <section class="grid grid-2">
         <div class="card">
             <h2>Live Menu</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                </tr>
-                </thead>
-                <tbody>
+            <p class="muted">Flash-sale rules apply automatically when their time window is active.</p>
+            <div class="product-list" style="margin-top: 1rem;">
                 @foreach ($products as $product)
-                    <tr>
-                        <td>
+                    <article class="product-row">
+                        <div class="product-main">
                             <strong>{{ $product->name }}</strong><br>
                             <span class="muted">{{ $product->category }}</span>
-                        </td>
-                        <td>Rp {{ number_format((float) $product->price, 0, ',', '.') }}</td>
-                        <td>{{ $product->inventory?->quantity_on_hand ?? 0 }}</td>
-                    </tr>
+                        </div>
+                        <div class="product-meta">
+                            <span class="product-label">Price</span>
+                            @if ($product->has_active_discount ?? false)
+                                <div class="price-stack">
+                                    <span class="price-current">Rp {{ number_format((float) $product->effective_price, 0, ',', '.') }}</span>
+                                    <span class="price-old">Rp {{ number_format((float) $product->original_price, 0, ',', '.') }}</span>
+                                    <span class="discount-note">{{ $product->discount_name }}</span>
+                                </div>
+                            @else
+                                <span class="product-value">Rp {{ number_format((float) $product->price, 0, ',', '.') }}</span>
+                            @endif
+                        </div>
+                        <div class="product-meta">
+                            <span class="product-label">Stock</span>
+                            <span class="product-value">{{ $product->inventory?->quantity_on_hand ?? 0 }}</span>
+                        </div>
+                        <div class="product-meta">
+                            <span class="product-label">Status</span>
+                            <span class="badge {{ ($product->inventory?->quantity_on_hand ?? 0) > 0 ? '' : 'badge-muted' }}">
+                                {{ ($product->inventory?->quantity_on_hand ?? 0) > 0 ? 'AVAILABLE' : 'OUT OF STOCK' }}
+                            </span>
+                        </div>
+                    </article>
                 @endforeach
-                </tbody>
-            </table>
+            </div>
         </div>
 
         <div class="card stack">
             <div>
                 <h2>Place a Pre-order</h2>
                 <p class="muted">Enter customer details, choose pickup time, then fill only the quantities you want.</p>
+                <p class="helper-text">Planning a celebration cake? <a href="{{ route('menu.custom-cake.show', $bakery->public_slug) }}">Use the custom cake configurator</a>. {{ $cakeRequestCount }} guided request(s) already scheduled.</p>
             </div>
 
-            <form action="{{ route('menu.order.store', $bakery->qr_token) }}" method="POST" class="stack">
+            <form action="{{ route('menu.order.store', $bakery->public_slug) }}" method="POST" class="stack">
                 @csrf
 
                 <div class="form-grid">
@@ -88,32 +102,42 @@
 
                 <div class="card subcard">
                     <h3>Choose Products</h3>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Available</th>
-                            <th>Quantity</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                    <div class="selector-list">
                         @foreach ($products as $product)
-                            <tr>
-                                <td>{{ $product->name }}</td>
-                                <td>{{ $product->inventory?->quantity_on_hand ?? 0 }}</td>
-                                <td>
+                            <article class="selector-row">
+                                <div class="product-main">
+                                    <strong>{{ $product->name }}</strong>
+                                    <p class="product-copy">{{ $product->category }}</p>
+                                </div>
+                                <div class="product-meta">
+                                    <span class="product-label">Price</span>
+                                    @if ($product->has_active_discount ?? false)
+                                        <div class="price-stack">
+                                            <span class="price-current">Rp {{ number_format((float) $product->effective_price, 0, ',', '.') }}</span>
+                                            <span class="price-old">Rp {{ number_format((float) $product->original_price, 0, ',', '.') }}</span>
+                                        </div>
+                                    @else
+                                        <span class="product-value">Rp {{ number_format((float) $product->price, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
+                                <div class="product-meta">
+                                    <span class="product-label">Available</span>
+                                    <span class="product-value">{{ $product->inventory?->quantity_on_hand ?? 0 }}</span>
+                                </div>
+                                <div class="selector-quantity">
+                                    <label for="public_quantity_{{ $product->id }}">Quantity</label>
                                     <input
+                                        id="public_quantity_{{ $product->id }}"
                                         name="quantities[{{ $product->id }}]"
                                         type="number"
                                         min="0"
                                         max="{{ $product->inventory?->quantity_on_hand ?? 0 }}"
                                         value="{{ old('quantities.'.$product->id, 0) }}"
                                     >
-                                </td>
-                            </tr>
+                                </div>
+                            </article>
                         @endforeach
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
 
                 <button class="button" type="submit">Send Pre-order</button>

@@ -39,8 +39,8 @@
             </div>
 
             <div class="card" style="background: #fff;">
-                <strong>QR Target Link</strong>
-                <p><a href="{{ route('menu.show', $bakery->qr_token) }}" target="_blank">{{ route('menu.show', $bakery->qr_token) }}</a></p>
+                <strong>Public Ordering Link</strong>
+                <p><a href="{{ route('menu.show', $bakery->public_slug) }}" target="_blank">{{ route('menu.show', $bakery->public_slug) }}</a></p>
             </div>
 
             <button class="button" type="submit">Save Bakery Profile</button>

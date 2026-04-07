@@ -14,6 +14,7 @@ class Bakery extends Model
     protected $fillable = [
         'user_id',
         'shop_name',
+        'public_slug',
         'phone',
         'email',
         'address',
@@ -52,5 +53,15 @@ class Bakery extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function discountRules(): HasMany
+    {
+        return $this->hasMany(DiscountRule::class);
+    }
+
+    public function customCakeRequests(): HasMany
+    {
+        return $this->hasMany(CustomCakeRequest::class);
     }
 }

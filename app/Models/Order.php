@@ -18,6 +18,7 @@ class Order extends Model
         'order_type',
         'order_status',
         'total_amount',
+        'discount_total',
         'platform_fee',
         'notes',
         'pickup_time',
@@ -31,6 +32,7 @@ class Order extends Model
     {
         return [
             'total_amount' => 'decimal:2',
+            'discount_total' => 'decimal:2',
             'platform_fee' => 'decimal:2',
             'pickup_time' => 'datetime',
             'expires_at' => 'datetime',
@@ -58,5 +60,15 @@ class Order extends Model
     public function isPreorder(): bool
     {
         return $this->order_type === 'preorder';
+    }
+
+    public function grossBeforeDiscount(): float
+    {
+        return (float) $this->total_amount + (float) $this->discount_total;
+    }
+
+    public function netAfterFees(): float
+    {
+        return (float) $this->total_amount - (float) $this->platform_fee;
     }
 }
