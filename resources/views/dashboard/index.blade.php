@@ -10,8 +10,8 @@
                 <div class="actions">
                     <a class="button-inline" href="{{ route('orders.create') }}">Create Order</a>
                     <a class="button-inline" href="{{ route('products.create') }}">Add Product</a>
-                    <a class="button-inline button-secondary" href="{{ route('discounts.index') }}">Flash Sale Rules</a>
-                    <a class="button-inline button-secondary" href="{{ route('analytics.index') }}">Sales Analytics</a>
+                    <a class="button-inline" href="{{ route('discounts.index') }}">Flash Sale Rules</a>
+                    <a class="button-inline" href="{{ route('analytics.index') }}">Sales Analytics</a>
                 </div>
             </div>
 
@@ -23,30 +23,30 @@
         </div>
     </section>
 
-    <section class="grid grid-4">
-        <div class="stat">
+    <section class="dashboard-stats">
+        <div class="stat dashboard-stat">
             <small>Total Products</small>
-            <h2>{{ $stats['products'] }}</h2>
+            <div class="dashboard-stat-value">{{ $stats['products'] }}</div>
         </div>
-        <div class="stat">
+        <div class="stat dashboard-stat">
             <small>Registered Customers</small>
-            <h2>{{ $stats['customers'] }}</h2>
+            <div class="dashboard-stat-value">{{ $stats['customers'] }}</div>
         </div>
-        <div class="stat">
+        <div class="stat dashboard-stat">
             <small>Orders Today</small>
-            <h2>{{ $stats['orders_today'] }}</h2>
+            <div class="dashboard-stat-value">{{ $stats['orders_today'] }}</div>
         </div>
-        <div class="stat">
+        <div class="stat dashboard-stat">
             <small>Revenue Ledger</small>
-            <h2>Rp {{ number_format((float) $stats['revenue_ledger'], 0, ',', '.') }}</h2>
+            <div class="dashboard-stat-value dashboard-stat-value-money">Rp {{ number_format((float) $stats['revenue_ledger'], 0, ',', '.') }}</div>
         </div>
-        <div class="stat">
+        <div class="stat dashboard-stat">
             <small>Active Discounts</small>
-            <h2>{{ $stats['active_discounts'] }}</h2>
+            <div class="dashboard-stat-value">{{ $stats['active_discounts'] }}</div>
         </div>
-        <div class="stat">
+        <div class="stat dashboard-stat">
             <small>Custom Cake Requests</small>
-            <h2>{{ $stats['custom_cake_requests'] }}</h2>
+            <div class="dashboard-stat-value">{{ $stats['custom_cake_requests'] }}</div>
         </div>
     </section>
 
