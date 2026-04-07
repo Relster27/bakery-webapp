@@ -10,13 +10,15 @@
                 <div class="actions">
                     <a class="button-inline" href="{{ route('orders.create') }}">Create Order</a>
                     <a class="button-inline" href="{{ route('products.create') }}">Add Product</a>
+                    <a class="button-inline button-secondary" href="{{ route('discounts.index') }}">Flash Sale Rules</a>
+                    <a class="button-inline button-secondary" href="{{ route('analytics.index') }}">Sales Analytics</a>
                 </div>
             </div>
 
             <div class="hero-aside">
-                <span class="eyebrow">Customer Ordering Link</span>
-                <p><a href="{{ route('menu.show', $bakery->qr_token) }}" target="_blank">{{ route('menu.show', $bakery->qr_token) }}</a></p>
-                <p class="muted">Use this exact public URL as the destination for your QR code at the counter or on printed packaging.</p>
+                <span class="eyebrow">Public Ordering Link</span>
+                <p><a href="{{ route('menu.show', $bakery->public_slug) }}" target="_blank">{{ route('menu.show', $bakery->public_slug) }}</a></p>
+                <p class="muted">Share this public URL directly with customers so they can browse the menu and place a pickup order.</p>
             </div>
         </div>
     </section>
@@ -37,6 +39,44 @@
         <div class="stat">
             <small>Revenue Ledger</small>
             <h2>Rp {{ number_format((float) $stats['revenue_ledger'], 0, ',', '.') }}</h2>
+        </div>
+        <div class="stat">
+            <small>Active Discounts</small>
+            <h2>{{ $stats['active_discounts'] }}</h2>
+        </div>
+        <div class="stat">
+            <small>Custom Cake Requests</small>
+            <h2>{{ $stats['custom_cake_requests'] }}</h2>
+        </div>
+    </section>
+
+    <section class="card stack" style="margin-top: 1rem;">
+        <div>
+            <h2>Revenue & Fee Transparency</h2>
+            <p class="muted">This section separates gross value, discount givebacks, customer payments, and the 3% platform fee already calculated on each transaction.</p>
+        </div>
+
+        <div class="metric-grid">
+            <div class="metric-card">
+                <h3>Gross Before Discount</h3>
+                <strong>Rp {{ number_format((float) $transparency['gross_before_discount'], 0, ',', '.') }}</strong>
+            </div>
+            <div class="metric-card">
+                <h3>Discounts Given</h3>
+                <strong>Rp {{ number_format((float) $transparency['discounts_given'], 0, ',', '.') }}</strong>
+            </div>
+            <div class="metric-card">
+                <h3>Customer Paid</h3>
+                <strong>Rp {{ number_format((float) $transparency['customer_paid'], 0, ',', '.') }}</strong>
+            </div>
+            <div class="metric-card">
+                <h3>Platform Fees</h3>
+                <strong>Rp {{ number_format((float) $transparency['platform_fees'], 0, ',', '.') }}</strong>
+            </div>
+            <div class="metric-card">
+                <h3>Net After Fees</h3>
+                <strong>Rp {{ number_format((float) $transparency['net_after_fees'], 0, ',', '.') }}</strong>
+            </div>
         </div>
     </section>
 
@@ -120,5 +160,42 @@
                 </div>
             @endif
         </div>
+    </section>
+
+    <section class="card" style="margin-top: 1rem;">
+        <div class="dashboard-panel-head">
+            <div>
+                <h2>Upcoming Production Snapshot</h2>
+                <p class="muted">Top items queued in active pre-orders. Use the full report for date-based production planning.</p>
+            </div>
+            <div class="actions">
+                <a class="button-inline button-secondary" href="{{ route('production-reports.index') }}">Open Production Report</a>
+            </div>
+        </div>
+
+        @if ($upcomingPrep->isEmpty())
+            <p class="muted">No active pre-orders are currently waiting for production.</p>
+        @else
+            <div class="report-list" style="margin-top: 1rem;">
+                @foreach ($upcomingPrep as $prep)
+                    <article class="report-row">
+                        <div class="product-main">
+                            <strong>{{ $prep['product'] }}</strong>
+                            <p class="product-copy">Upcoming preorder demand</p>
+                        </div>
+
+                        <div class="product-meta">
+                            <span class="product-label">Quantity</span>
+                            <span class="product-value">{{ $prep['quantity'] }}</span>
+                        </div>
+
+                        <div class="product-meta">
+                            <span class="product-label">Workflow</span>
+                            <span class="badge">PREP</span>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        @endif
     </section>
 @endsection

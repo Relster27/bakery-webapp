@@ -320,7 +320,7 @@ Full example link:
 http://127.0.0.1:8000/menu/morning-crumbs-demo
 ```
 
-That page is the one a QR code should open later.
+That page is the public customer link you can share directly.
 
 ## One full example from zero
 

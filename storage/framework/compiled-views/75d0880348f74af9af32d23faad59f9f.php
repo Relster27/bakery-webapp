@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo e($title ?? 'Return-Oriented Pastries'); ?></title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
         :root {
             --paper: #f7f0e6;
             --paper-deep: #e7d7bf;
@@ -36,7 +38,7 @@
 
         body {
             margin: 0;
-            font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+            font-family: "Manrope", "Segoe UI", "Trebuchet MS", sans-serif;
             background:
                 radial-gradient(circle at top left, rgba(214, 151, 95, 0.24), transparent 26%),
                 radial-gradient(circle at 84% 9%, rgba(100, 113, 91, 0.18), transparent 20%),
@@ -115,10 +117,10 @@
         }
 
         .brand strong {
-            font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+            font-family: "Plus Jakarta Sans", "Manrope", sans-serif;
             font-size: 1.55rem;
             font-weight: 700;
-            letter-spacing: 0.02em;
+            letter-spacing: -0.02em;
         }
 
         .brand span {
@@ -256,8 +258,10 @@
         h3 {
             margin-top: 0;
             margin-bottom: 0.35rem;
-            font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
-            line-height: 1.08;
+            font-family: "Plus Jakarta Sans", "Manrope", sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.04;
         }
 
         h1 {
@@ -886,6 +890,282 @@
             background: rgba(255, 250, 244, 0.98);
         }
 
+        .landing-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.85fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .landing-hero-copy,
+        .landing-hero-panel,
+        .landing-card,
+        .landing-flow {
+            border-radius: 24px;
+        }
+
+        .landing-hero-copy {
+            padding: 1.5rem;
+            background:
+                radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 28%),
+                linear-gradient(135deg, rgba(43, 30, 24, 0.96), rgba(119, 73, 49, 0.9));
+            color: #fff7ef;
+            box-shadow: 0 26px 56px rgba(52, 31, 22, 0.16);
+        }
+
+        .landing-hero-copy .muted {
+            color: rgba(255, 241, 228, 0.76);
+        }
+
+        .landing-hero-panel {
+            padding: 1.35rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 243, 236, 0.92));
+            border: 1px solid rgba(176, 146, 121, 0.16);
+            box-shadow: var(--shadow);
+        }
+
+        .landing-kicker {
+            margin-bottom: 0.8rem;
+            color: #846f60;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .landing-checklist {
+            display: grid;
+            gap: 0.85rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .landing-checklist li {
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .landing-checklist li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.42rem;
+            width: 0.72rem;
+            height: 0.72rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #f3c18f, #c67743);
+            box-shadow: 0 0 0 4px rgba(243, 193, 143, 0.12);
+        }
+
+        .landing-proof {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1.2rem;
+        }
+
+        .landing-proof-item {
+            padding: 0.95rem 1rem;
+            border-radius: 18px;
+            background: rgba(255, 251, 245, 0.1);
+            border: 1px solid rgba(255, 248, 240, 0.14);
+        }
+
+        .landing-proof-item strong,
+        .landing-feature strong,
+        .landing-step strong {
+            display: block;
+            margin-bottom: 0.28rem;
+        }
+
+        .landing-proof-item span {
+            color: rgba(255, 241, 228, 0.76);
+            font-size: 0.92rem;
+        }
+
+        .landing-section,
+        .landing-metrics {
+            margin-bottom: 1rem;
+        }
+
+        .landing-card-head {
+            margin-bottom: 1rem;
+        }
+
+        .landing-eyebrow {
+            color: #6a574a;
+        }
+
+        .landing-feature-list {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .landing-feature {
+            padding: 1rem;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 240, 231, 0.9));
+            border: 1px solid rgba(180, 149, 121, 0.14);
+        }
+
+        .landing-feature p,
+        .landing-step p,
+        .landing-stat p {
+            margin-bottom: 0;
+        }
+
+        .landing-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 0.95rem;
+        }
+
+        .landing-step {
+            padding: 1rem;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 243, 236, 0.92));
+            border: 1px solid rgba(176, 146, 121, 0.16);
+        }
+
+        .landing-step span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.2rem;
+            height: 2.2rem;
+            margin-bottom: 0.75rem;
+            border-radius: 999px;
+            background: rgba(183, 103, 58, 0.12);
+            color: var(--accent-deep);
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        .landing-cta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.35rem 1.45rem;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(43, 30, 24, 0.96), rgba(119, 73, 49, 0.9));
+            color: #fff7ef;
+            box-shadow: 0 26px 56px rgba(52, 31, 22, 0.16);
+        }
+
+        .landing-cta h2 {
+            max-width: 760px;
+            margin-bottom: 0;
+        }
+
+        .price-stack {
+            display: grid;
+            gap: 0.18rem;
+        }
+
+        .price-old {
+            color: #9c8b7e;
+            font-size: 0.82rem;
+            text-decoration: line-through;
+        }
+
+        .price-current {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-deep);
+        }
+
+        .discount-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 999px;
+            background: rgba(183, 103, 58, 0.12);
+            color: var(--accent-deep);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .metric-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .metric-card {
+            padding: 1rem;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 241, 233, 0.9));
+            border: 1px solid rgba(180, 149, 121, 0.16);
+        }
+
+        .metric-card h3 {
+            margin-bottom: 0.25rem;
+            font-size: 0.96rem;
+            font-family: "Manrope", "Segoe UI", "Trebuchet MS", sans-serif;
+        }
+
+        .metric-card strong {
+            display: block;
+            font-size: 1.4rem;
+            font-family: "Plus Jakarta Sans", "Manrope", sans-serif;
+            font-weight: 800;
+        }
+
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: end;
+        }
+
+        .filter-bar > div {
+            min-width: 160px;
+            flex: 1 1 180px;
+        }
+
+        .report-list {
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        .report-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(110px, 0.55fr));
+            gap: 0.9rem;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 243, 236, 0.92));
+            border: 1px solid rgba(176, 146, 121, 0.16);
+        }
+
+        .report-row-wide {
+            grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(110px, 0.5fr));
+        }
+
+        .step-card {
+            padding: 1rem;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 240, 231, 0.9));
+            border: 1px solid rgba(180, 149, 121, 0.14);
+        }
+
+        .step-card h3 {
+            margin-bottom: 0.3rem;
+        }
+
+        .inline-note {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
         .customer-row {
             display: grid;
             grid-template-columns: minmax(0, 1.5fr) minmax(180px, 0.95fr) minmax(150px, 0.8fr) auto;
@@ -941,6 +1221,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .landing-hero {
+                grid-template-columns: 1fr;
+            }
+
             .product-row {
                 grid-template-columns: 1fr 1fr;
             }
@@ -954,6 +1238,11 @@
             }
 
             .dashboard-row {
+                grid-template-columns: 1fr;
+            }
+
+            .report-row,
+            .report-row-wide {
                 grid-template-columns: 1fr;
             }
 
@@ -998,6 +1287,9 @@
                 <a href="<?php echo e(route('inventories.index')); ?>">Inventory</a>
                 <a href="<?php echo e(route('customers.index')); ?>">Customers</a>
                 <a href="<?php echo e(route('orders.index')); ?>">Orders</a>
+                <a href="<?php echo e(route('discounts.index')); ?>">Discounts</a>
+                <a href="<?php echo e(route('analytics.index')); ?>">Analytics</a>
+                <a href="<?php echo e(route('production-reports.index')); ?>">Reports</a>
                 <a href="<?php echo e(route('bakery.edit')); ?>">Bakery</a>
                 <form action="<?php echo e(route('logout')); ?>" method="POST">
                     <?php echo csrf_field(); ?>

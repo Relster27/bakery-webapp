@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Bakery;
 use App\Models\Customer;
+use App\Models\CustomCakeRequest;
+use App\Models\DiscountRule;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -39,6 +41,7 @@ class DatabaseSeeder extends Seeder
                 'address' => 'Jl. Roti Hangat No. 12',
                 'bank_details' => 'Bank BCA - 1234567890 - Morning Crumbs Bakery',
                 'revenue_ledger' => 0,
+                'public_slug' => 'morning-crumbs-demo',
                 'qr_token' => 'morning-crumbs-demo',
             ]
         );
@@ -111,6 +114,21 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        DiscountRule::query()->updateOrCreate(
+            [
+                'bakery_id' => $bakery->id,
+                'name' => 'Evening Bread Rescue',
+            ],
+            [
+                'scope' => 'category',
+                'category' => 'Bread',
+                'start_time' => '18:00:00',
+                'end_time' => '21:00:00',
+                'discount_percent' => 20,
+                'is_active' => true,
+            ]
+        );
+
         $completedOrder = Order::query()->updateOrCreate(
             ['order_number' => 'ORD-DEMO-001'],
             [
@@ -119,6 +137,7 @@ class DatabaseSeeder extends Seeder
                 'order_type' => 'counter',
                 'order_status' => 'completed',
                 'total_amount' => 33000,
+                'discount_total' => 0,
                 'platform_fee' => 990,
                 'notes' => 'Walk-in customer order.',
                 'ordered_at' => now()->subHours(3),
@@ -170,6 +189,7 @@ class DatabaseSeeder extends Seeder
                 'order_type' => 'preorder',
                 'order_status' => 'ready',
                 'total_amount' => 22000,
+                'discount_total' => 0,
                 'platform_fee' => 660,
                 'notes' => 'Customer will pick up this afternoon.',
                 'pickup_time' => now()->addHours(3),
@@ -200,5 +220,27 @@ class DatabaseSeeder extends Seeder
         $bakery->update([
             'revenue_ledger' => 33000,
         ]);
+
+        CustomCakeRequest::query()->updateOrCreate(
+            [
+                'bakery_id' => $bakery->id,
+                'customer_phone' => '0813-9999-1111',
+                'pickup_date' => now()->addDays(1)->toDateString(),
+            ],
+            [
+                'customer_name' => 'Mira',
+                'customer_email' => 'mira@example.com',
+                'servings' => 20,
+                'size' => '8-inch',
+                'sponge' => 'Chocolate',
+                'filling' => 'Fresh Cream',
+                'frosting' => 'Buttercream',
+                'decoration' => 'Floral decoration',
+                'occasion' => 'Birthday',
+                'inscription' => 'Happy Birthday Mira',
+                'notes' => 'Soft pink palette with minimal flowers.',
+                'status' => 'requested',
+            ]
+        );
     }
 }

@@ -15,12 +15,18 @@ use Illuminate\Validation\ValidationException;
 
 class OrderPlacementService
 {
+    public function __construct(
+        protected PricingService $pricingService
+    ) {
+    }
+
     public function place(Bakery $bakery, array $data): Order
     {
         return DB::transaction(function () use ($bakery, $data) {
             $items = $this->resolveItems($bakery, $data['quantities'] ?? []);
             $customer = $this->resolveCustomer($bakery, $data);
             $totalAmount = collect($items)->sum(fn (array $item) => $item['subtotal_item']);
+            $discountTotal = collect($items)->sum(fn (array $item) => $item['discount_total']);
             $orderType = $data['order_type'] ?? 'preorder';
             $pickupTime = ! empty($data['pickup_time']) ? Carbon::parse($data['pickup_time']) : null;
             $initialStatus = $orderType === 'counter' ? 'completed' : 'pending';
@@ -32,6 +38,7 @@ class OrderPlacementService
                 'order_type' => $orderType,
                 'order_status' => $initialStatus,
                 'total_amount' => $totalAmount,
+                'discount_total' => $discountTotal,
                 'platform_fee' => round($totalAmount * 0.03, 2),
                 'notes' => $data['notes'] ?? null,
                 'pickup_time' => $pickupTime,
@@ -43,7 +50,7 @@ class OrderPlacementService
             ]);
 
             foreach ($items as $item) {
-                $order->items()->create(Arr::except($item, ['inventory']));
+                $order->items()->create(Arr::except($item, ['inventory', 'discount_total']));
                 $item['inventory']->decrement('quantity_on_hand', $item['quantity']);
             }
 
@@ -216,11 +223,17 @@ class OrderPlacementService
                 ]);
             }
 
+            $pricing = $this->pricingService->priceForProduct($bakery, $product);
+            $effectiveUnitPrice = (float) $pricing['effective_price'];
+            $originalUnitPrice = (float) $pricing['original_price'];
+            $lineDiscount = ($originalUnitPrice - $effectiveUnitPrice) * $selectedItem['quantity'];
+
             $items[] = [
                 'product_id' => $product->id,
                 'quantity' => $selectedItem['quantity'],
-                'unit_price' => $product->price,
-                'subtotal_item' => $product->price * $selectedItem['quantity'],
+                'unit_price' => $effectiveUnitPrice,
+                'subtotal_item' => $effectiveUnitPrice * $selectedItem['quantity'],
+                'discount_total' => round($lineDiscount, 2),
                 'inventory' => $inventory,
             ];
         }
