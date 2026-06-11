@@ -1,0 +1,133 @@
+<?php $__env->startSection('content'); ?>
+<div class="hero">
+    <div class="hero-grid">
+        <div>
+            <div class="eyebrow">Platform Admin Panel</div>
+            <h1>Global Platform Dashboard</h1>
+            <p class="muted">Monitor overall transaction flows, calculate platform fees (3% commission split), and manage bakery partners.</p>
+        </div>
+        <div class="hero-aside">
+            <div class="eyebrow">Platform Rule</div>
+            <strong>3% Split Commission</strong>
+            <p>Every transaction processed on the platform routes 3% of gross value as platform profit and settles 97% to the respective bakery.</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-4" style="margin-bottom: 1.5rem;">
+    <div class="stat">
+        <small>Total Gross Sales (100%)</small>
+        <strong>Rp <?php echo e(number_format($stats['total_gross'], 2, ',', '.')); ?></strong>
+        <p class="inline-note" style="margin-top: 0.25rem;">Total money paid by customers</p>
+    </div>
+    <div class="stat" style="border-left: 4px solid var(--accent);">
+        <small>Platform Profit (3%)</small>
+        <strong style="color: var(--accent);">Rp <?php echo e(number_format($stats['total_platform_cut'], 2, ',', '.')); ?></strong>
+        <p class="inline-note" style="margin-top: 0.25rem;">Our total platform revenue</p>
+    </div>
+    <div class="stat">
+        <small>Bakery Settlements (97%)</small>
+        <strong>Rp <?php echo e(number_format($stats['total_bakery_settlement'], 2, ',', '.')); ?></strong>
+        <p class="inline-note" style="margin-top: 0.25rem;">Routed net to partners</p>
+    </div>
+    <div class="stat">
+        <small>Bakery Partners & Tx</small>
+        <strong><?php echo e($stats['total_bakeries']); ?> / <?php echo e($stats['total_transactions']); ?></strong>
+        <p class="inline-note" style="margin-top: 0.25rem;">Active shops / Total orders split</p>
+    </div>
+</div>
+
+<div class="grid grid-2" style="margin-bottom: 1.5rem; align-items: start;">
+    <div class="card">
+        <div class="landing-card-head">
+            <h2>Bakery Partners</h2>
+            <p class="muted">Registered bakery tenants with their split-payment statistics and payout accounts.</p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Shop / Owner</th>
+                    <th>Gross Sales</th>
+                    <th>Platform (3%)</th>
+                    <th>Settled (97%)</th>
+                    <th>Payout Bank Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $__empty_1 = true; $__currentLoopData = $bakeries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bakery): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                    <tr>
+                        <td>
+                            <strong><?php echo e($bakery->shop_name); ?></strong><br>
+                            <span class="muted" style="font-size: 0.8rem;">Owner: <?php echo e($bakery->owner?->name ?? 'Unknown'); ?> (<?php echo e($bakery->owner?->email); ?>)</span>
+                        </td>
+                        <td>Rp <?php echo e(number_format($bakery->gross_total, 0, ',', '.')); ?></td>
+                        <td style="color: var(--accent); font-weight: bold;">Rp <?php echo e(number_format($bakery->cut_total, 0, ',', '.')); ?></td>
+                        <td>Rp <?php echo e(number_format($bakery->settlement_total, 0, ',', '.')); ?></td>
+                        <td>
+                            <?php if($bakery->bank_name): ?>
+                                <span style="font-size: 0.85rem;">
+                                    <strong><?php echo e($bakery->bank_name); ?></strong><br>
+                                    Acc: <?php echo e($bakery->bank_account_number); ?><br>
+                                    Name: <?php echo e($bakery->bank_account_name); ?>
+
+                                </span>
+                            <?php else: ?>
+                                <span class="muted" style="font-size: 0.85rem; font-style: italic;">No bank account set</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                    <tr>
+                        <td colspan="5" style="text-align: center;" class="muted">No bakery tenants registered yet.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="landing-card-head">
+            <h2>Recent Split Transactions</h2>
+            <p class="muted">Real-time split routing operations logged in the platform ledger.</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tx ID / Time</th>
+                    <th>Bakery</th>
+                    <th>Order No</th>
+                    <th>Gross</th>
+                    <th>Split (3% / 97%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $__empty_1 = true; $__currentLoopData = $recentTransactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tx): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                    <tr>
+                        <td>
+                            <strong>TX-<?php echo e(str_pad($tx->id, 5, '0', STR_PAD_LEFT)); ?></strong><br>
+                            <span class="muted" style="font-size: 0.8rem;"><?php echo e($tx->created_at->format('M d, Y H:i')); ?></span>
+                        </td>
+                        <td><?php echo e($tx->bakery?->shop_name ?? 'Deleted'); ?></td>
+                        <td><code><?php echo e($tx->order?->order_number ?? 'N/A'); ?></code></td>
+                        <td>Rp <?php echo e(number_format($tx->gross_amount, 0, ',', '.')); ?></td>
+                        <td>
+                            <span style="color: var(--accent); font-weight: bold;">Rp <?php echo e(number_format($tx->platform_cut, 0, ',', '.')); ?></span>
+                            <span class="muted" style="font-size: 0.85rem;">(3%)</span><br>
+                            <span style="color: var(--forest); font-weight: bold;">Rp <?php echo e(number_format($tx->bakery_settlement, 0, ',', '.')); ?></span>
+                            <span class="muted" style="font-size: 0.85rem;">(97%)</span>
+                        </td>
+                    </tr>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                    <tr>
+                        <td colspan="5" style="text-align: center;" class="muted">No split transactions recorded yet.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', ['title' => 'Platform Admin Dashboard - Return-Oriented Pastries'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Wilson Tjokro\Downloads\bakery-webapp\resources\views/platform/dashboard.blade.php ENDPATH**/ ?>

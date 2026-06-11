@@ -7,7 +7,7 @@
             <p class="muted">A product is one menu item. Inventory for that product is created at the same time.</p>
         </div>
 
-        <form action="{{ route('products.store') }}" method="POST" class="stack">
+        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="stack">
             @csrf
 
             <div class="form-grid">
@@ -18,7 +18,11 @@
 
                 <div>
                     <label for="category">Category</label>
-                    <input id="category" name="category" type="text" value="{{ old('category', 'Bread') }}" required>
+                    <select id="category" name="category" required>
+                        <option value="Bread" @selected(old('category', 'Bread') == 'Bread')>Bread</option>
+                        <option value="Cake" @selected(old('category') == 'Cake')>Cake</option>
+                        <option value="Pastry" @selected(old('category') == 'Pastry')>Pastry</option>
+                    </select>
                 </div>
 
                 <div>
@@ -36,6 +40,11 @@
                 <div>
                     <label for="reorder_level">Reorder Level</label>
                     <input id="reorder_level" name="reorder_level" type="number" min="0" value="{{ old('reorder_level', 5) }}" required>
+                </div>
+                
+                <div>
+                    <label for="image">Product Image</label>
+                    <input id="image" name="image" type="file" accept="image/png, image/jpeg, image/jpg, image/webp" style="background: var(--paper); padding: 0.6rem; width: 100%;">
                 </div>
             </div>
 

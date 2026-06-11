@@ -1,54 +1,83 @@
 services:
+
+  # ─────────────────────────────────────────────
+  # Laravel Application (PHP 8.2 + Apache)
+  # ─────────────────────────────────────────────
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bakery-webapp-app
+    container_name: bakery-app
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      APP_NAME: Bakery Inventory App
+      # Application
+      APP_NAME: "Bakery Inventory App"
       APP_ENV: local
       APP_DEBUG: "true"
       APP_URL: http://localhost:8088
+      APP_TIMEZONE: Asia/Jakarta
+      # NOTE: APP_KEY is baked into the image at build time — do not set here.
+
+      # Database (connects to the mysql service below)
       DB_CONNECTION: mysql
       DB_HOST: mysql
       DB_PORT: "3306"
       DB_DATABASE: bakery_webapp
       DB_USERNAME: bakery_user
-      DB_PASSWORD: bakery_password
-      CACHE_STORE: file
+      DB_PASSWORD: bakery_secret
+
+      # Session & cache — use file drivers (no Redis needed)
       SESSION_DRIVER: file
+      SESSION_LIFETIME: "120"
+      CACHE_STORE: file
       QUEUE_CONNECTION: sync
+      FILESYSTEM_DISK: local
+
+      # Mail — log only (no real SMTP needed)
+      MAIL_MAILER: log
+
     ports:
       - "8088:80"
+
+    volumes:
+      # Persist uploaded product images across container restarts
+      - storage_uploads:/var/www/html/storage/app/public
+
     restart: unless-stopped
 
+  # ─────────────────────────────────────────────
+  # MySQL 8 Database
+  # ─────────────────────────────────────────────
   mysql:
     image: mysql:8.0
-    container_name: bakery-webapp-mysql
+    container_name: bakery-mysql
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: bakery_webapp
       MYSQL_USER: bakery_user
-      MYSQL_PASSWORD: bakery_password
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: bakery_secret
+      MYSQL_ROOT_PASSWORD: bakery_root
     ports:
-      - "3307:3306"
+      - "3307:3306"   # Exposed on 3307 so it doesn't clash with a local MySQL
     volumes:
-      - bakery_mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-ubakery_user", "-pbakery_secret"]
       interval: 10s
       timeout: 5s
-      retries: 12
-      start_period: 20s
+      retries: 15
+      start_period: 30s
     restart: unless-stopped
 
+  # ─────────────────────────────────────────────
+  # phpMyAdmin (optional DB browser)
+  # Open: http://localhost:8081
+  # ─────────────────────────────────────────────
   phpmyadmin:
     image: phpmyadmin:5-apache
-    container_name: bakery-webapp-phpmyadmin
+    container_name: bakery-phpmyadmin
     depends_on:
       mysql:
         condition: service_healthy
@@ -56,11 +85,15 @@ services:
       PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_USER: root
-      PMA_PASSWORD: root
+      PMA_PASSWORD: bakery_root
       UPLOAD_LIMIT: 64M
     ports:
       - "8081:80"
     restart: unless-stopped
 
+# ─────────────────────────────────────────────
+# Named volumes (data survives container restarts)
+# ─────────────────────────────────────────────
 volumes:
-  bakery_mysql_data:
+  mysql_data:        # Bakery database rows
+  storage_uploads:   # Uploaded product images

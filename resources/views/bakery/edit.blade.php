@@ -34,8 +34,22 @@
             </div>
 
             <div>
-                <label for="bank_details">Bank Details</label>
-                <textarea id="bank_details" name="bank_details">{{ old('bank_details', $bakery->bank_details) }}</textarea>
+                <h3 style="margin-bottom: 0.75rem; font-size: 1rem;">Bank Transfer Details</h3>
+                <p class="muted" style="margin-bottom: 1rem; font-size: 0.88rem;">These details will be shown to customers on the payment page when they choose Bank Transfer.</p>
+                <div class="form-grid">
+                    <div>
+                        <label for="bank_name">Bank Name</label>
+                        <input id="bank_name" name="bank_name" type="text" placeholder="e.g. BCA, Mandiri, BNI" value="{{ old('bank_name', $bakery->bank_name) }}">
+                    </div>
+                    <div>
+                        <label for="bank_account_number">Account Number</label>
+                        <input id="bank_account_number" name="bank_account_number" type="text" placeholder="e.g. 1234567890" value="{{ old('bank_account_number', $bakery->bank_account_number) }}">
+                    </div>
+                    <div>
+                        <label for="bank_account_name">Account Holder Name</label>
+                        <input id="bank_account_name" name="bank_account_name" type="text" placeholder="e.g. Morning Crumbs Bakery" value="{{ old('bank_account_name', $bakery->bank_account_name) }}">
+                    </div>
+                </div>
             </div>
 
             <div class="card" style="background: #fff;">

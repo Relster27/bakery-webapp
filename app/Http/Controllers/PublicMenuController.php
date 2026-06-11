@@ -49,11 +49,11 @@ class PublicMenuController extends Controller
         $order = $this->orderPlacementService->place($bakery, [
             ...$validated,
             'order_type' => 'preorder',
+            'order_status' => 'payment_pending',
         ]);
 
         return redirect()
-            ->route('menu.show', $bakery->public_slug)
-            ->with('success', 'Pre-order sent. Your order number is '.$order->order_number.'.');
+            ->route('menu.payment.show', ['bakery' => $bakery->public_slug, 'order' => $order->order_number]);
     }
 
     public function showCustomCake(Bakery $bakery): View
@@ -69,7 +69,7 @@ class PublicMenuController extends Controller
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['nullable', 'email', 'max:255'],
             'customer_phone' => ['required', 'string', 'max:50'],
-            'pickup_date' => ['required', 'date', 'after_or_equal:today'],
+            'pickup_date' => ['required', 'date', 'after_or_equal:tomorrow'],
             'occasion' => ['nullable', 'string', 'max:255'],
             'servings' => ['required', 'integer', 'min:6', 'max:200'],
             'size' => ['required', 'string', 'max:50'],
@@ -81,10 +81,38 @@ class PublicMenuController extends Controller
             'notes' => ['nullable', 'string'],
         ]);
 
-        $bakery->customCakeRequests()->create($validated);
+        $customer = $this->orderPlacementService->resolveCustomer($bakery, $validated);
+
+        $customNotes = "CUSTOM CAKE REQUEST\n";
+        $customNotes .= "Occasion: {$validated['occasion']}\n";
+        $customNotes .= "Size/Servings: {$validated['size']} (approx {$validated['servings']} servings)\n";
+        $customNotes .= "Sponge: {$validated['sponge']}\n";
+        $customNotes .= "Filling: {$validated['filling']}\n";
+        $customNotes .= "Frosting: {$validated['frosting']}\n";
+        $customNotes .= "Decoration: {$validated['decoration']}\n";
+        $customNotes .= "Inscription: {$validated['inscription']}\n";
+        if (!empty($validated['notes'])) {
+            $customNotes .= "Extra Notes: {$validated['notes']}";
+        }
+
+        $pickupDate = \Illuminate\Support\Carbon::parse($validated['pickup_date']);
+
+        $order = \App\Models\Order::create([
+            'bakery_id' => $bakery->id,
+            'customer_id' => $customer?->id,
+            'order_number' => $this->orderPlacementService->makeOrderNumber(),
+            'order_type' => 'custom_cake',
+            'order_status' => 'payment_pending',
+            'total_amount' => 200000,
+            'discount_total' => 0,
+            'platform_fee' => 200000 * 0.03,
+            'notes' => $customNotes,
+            'pickup_time' => $pickupDate,
+            'expires_at' => $pickupDate->copy()->addHours(2),
+            'ordered_at' => now(),
+        ]);
 
         return redirect()
-            ->route('menu.custom-cake.show', $bakery->public_slug)
-            ->with('success', 'Custom cake request sent. The bakery can now review your design details.');
+            ->route('menu.payment.show', ['bakery' => $bakery->public_slug, 'order' => $order->order_number]);
     }
 }

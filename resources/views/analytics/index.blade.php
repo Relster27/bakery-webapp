@@ -56,7 +56,7 @@
         </div>
     </section>
 
-    <section class="grid grid-2" style="margin-top: 1rem;">
+    <section class="grid grid-2 items-start" style="margin-top: 1rem;">
         <div class="card stack">
             <div>
                 <h2>Best Selling Hours</h2>
@@ -122,8 +122,8 @@
         </div>
     </section>
 
-    <section class="grid grid-2" style="margin-top: 1rem;">
-        <div class="card stack">
+    <section class="grid grid-2 items-start" style="margin-top: 1rem;">
+        <div class="card stack h-fit">
             <div>
                 <h2>Status Breakdown</h2>
                 <p class="muted">Order mix across the full selected range.</p>
@@ -166,29 +166,32 @@
             @else
                 <div class="order-list">
                     @foreach ($orders as $order)
-                        <article class="order-row">
-                            <div class="product-main">
-                                <strong>{{ $order->order_number }}</strong>
-                                <p class="product-copy">{{ $order->customer?->name ?? 'Walk-in customer' }}</p>
+                        <article class="order-row-card">
+                            <div class="order-card-header">
+                                <div class="product-main">
+                                    <strong>{{ $order->order_number }}</strong>
+                                    <p class="product-copy">{{ $order->customer?->name ?? 'Walk-in customer' }}</p>
+                                </div>
+                                <div class="row-actions">
+                                    <a href="{{ route('orders.show', $order) }}">Open order</a>
+                                </div>
                             </div>
 
-                            <div class="product-meta">
-                                <span class="product-label">Type</span>
-                                <span class="product-value">{{ strtoupper($order->order_type) }}</span>
-                            </div>
+                            <div class="order-card-meta">
+                                <div class="product-meta">
+                                    <span class="product-label">Type</span>
+                                    <span class="product-value">{{ strtoupper($order->order_type) }}</span>
+                                </div>
 
-                            <div class="product-meta">
-                                <span class="product-label">Status</span>
-                                <span class="badge">{{ strtoupper($order->order_status) }}</span>
-                            </div>
+                                <div class="product-meta">
+                                    <span class="product-label">Status</span>
+                                    <span class="badge">{{ strtoupper($order->order_status) }}</span>
+                                </div>
 
-                            <div class="product-meta">
-                                <span class="product-label">Paid</span>
-                                <span class="product-value">Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
-                            </div>
-
-                            <div class="row-actions">
-                                <a href="{{ route('orders.show', $order) }}">Open order</a>
+                                <div class="product-meta">
+                                    <span class="product-label">Paid</span>
+                                    <span class="product-value">Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
+                                </div>
                             </div>
                         </article>
                     @endforeach

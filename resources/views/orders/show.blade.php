@@ -145,9 +145,16 @@
         <div class="item-list">
             @foreach ($order->items as $item)
                 <article class="item-row">
-                    <div class="product-main">
-                        <strong>{{ $item->product?->name }}</strong>
-                        <p class="product-copy">{{ $item->product?->category ?? 'Bakery item' }}</p>
+                    <div class="product-main" style="display: flex; gap: 1rem; align-items: center;">
+                        @if ($item->product?->image_path)
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($item->product->image_path) }}"
+                                 alt="{{ $item->product->name }}"
+                                 style="width: 52px; height: 52px; object-fit: cover; border-radius: 12px; border: 1px solid rgba(176,146,121,0.16); flex-shrink: 0; display: block;">
+                        @endif
+                        <div style="min-width: 0;">
+                            <strong>{{ $item->product?->name }}</strong>
+                            <p class="product-copy">{{ $item->product?->category ?? 'Bakery item' }}</p>
+                        </div>
                     </div>
 
                     <div class="product-meta">

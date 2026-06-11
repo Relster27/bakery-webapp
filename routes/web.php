@@ -11,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductionReportController;
 use App\Http\Controllers\PublicMenuController;
+use App\Http\Controllers\PlatformController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/landing', 'landing-showcase')->name('landing');
@@ -33,13 +34,17 @@ Route::post('/menu/{bakery:public_slug}/orders', [PublicMenuController::class, '
 Route::get('/menu/{bakery:public_slug}/custom-cake', [PublicMenuController::class, 'showCustomCake'])->name('menu.custom-cake.show');
 Route::post('/menu/{bakery:public_slug}/custom-cake', [PublicMenuController::class, 'storeCustomCake'])->name('menu.custom-cake.store');
 
+Route::get('/menu/{bakery:public_slug}/payment/{order}', [\App\Http\Controllers\PaymentController::class, 'show'])->name('menu.payment.show');
+Route::post('/menu/{bakery:public_slug}/payment/{order}', [\App\Http\Controllers\PaymentController::class, 'process'])->name('menu.payment.process');
+
 Route::middleware('auth')->group(function () {
+    Route::get('/platform/dashboard', [PlatformController::class, 'dashboard'])->name('platform.dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/bakery/edit', [BakeryController::class, 'edit'])->name('bakery.edit');
     Route::put('/bakery', [BakeryController::class, 'update'])->name('bakery.update');
 
-    Route::resource('products', ProductController::class)->except(['show', 'destroy']);
+    Route::resource('products', ProductController::class)->except(['show']);
 
     Route::get('/inventories', [InventoryController::class, 'index'])->name('inventories.index');
     Route::patch('/inventories/{inventory}', [InventoryController::class, 'update'])->name('inventories.update');
@@ -49,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/discounts', [DiscountRuleController::class, 'index'])->name('discounts.index');
     Route::post('/discounts', [DiscountRuleController::class, 'store'])->name('discounts.store');
     Route::patch('/discounts/{discountRule}', [DiscountRuleController::class, 'update'])->name('discounts.update');
+    Route::delete('/discounts/{discountRule}', [DiscountRuleController::class, 'destroy'])->name('discounts.destroy');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');

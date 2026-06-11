@@ -18,11 +18,13 @@ class BakeryController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'shop_name' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'address' => ['nullable', 'string'],
-            'bank_details' => ['nullable', 'string'],
+            'shop_name'           => ['required', 'string', 'max:255'],
+            'phone'               => ['nullable', 'string', 'max:50'],
+            'email'               => ['nullable', 'email', 'max:255'],
+            'address'             => ['nullable', 'string'],
+            'bank_name'           => ['nullable', 'string', 'max:100'],
+            'bank_account_number' => ['nullable', 'string', 'max:100'],
+            'bank_account_name'   => ['nullable', 'string', 'max:255'],
         ]);
 
         $this->currentBakery()->update($validated);

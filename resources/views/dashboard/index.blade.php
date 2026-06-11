@@ -6,12 +6,23 @@
             <div>
                 <span class="eyebrow">Owner Dashboard</span>
                 <h1>{{ $bakery->shop_name }}</h1>
-                <p class="muted">A single control room for menu changes, stock visibility, daily revenue, and live order handling.</p>
-                <div class="actions">
-                    <a class="button-inline" href="{{ route('orders.create') }}">Create Order</a>
-                    <a class="button-inline" href="{{ route('products.create') }}">Add Product</a>
-                    <a class="button-inline" href="{{ route('discounts.index') }}">Flash Sale Rules</a>
-                    <a class="button-inline" href="{{ route('analytics.index') }}">Sales Analytics</a>
+                <div class="actions" style="margin-top: 0.85rem; flex-wrap: wrap; gap: 0.65rem;">
+                    {{-- Chocolate Brown --}}
+                    <a href="{{ route('orders.create') }}" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.4rem; border-radius: 999px; background: #7B3F00; color: #fff7ef; font-weight: 700; font-size: 0.97rem; text-decoration: none; box-shadow: 0 6px 18px rgba(123,63,0,0.35); transition: transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(123,63,0,0.48)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(123,63,0,0.35)'">
+                        ＋ Create Order
+                    </a>
+                    {{-- Copper Brown --}}
+                    <a href="{{ route('products.create') }}" style="display: inline-flex; align-items: center; padding: 0.7rem 1.4rem; border-radius: 999px; background: #96400E; color: #fff7ef; font-weight: 700; font-size: 0.97rem; text-decoration: none; box-shadow: 0 6px 18px rgba(150,64,14,0.32); transition: transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(150,64,14,0.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(150,64,14,0.32)'">
+                        Add Product
+                    </a>
+                    {{-- Coffee Brown --}}
+                    <a href="{{ route('discounts.index') }}" style="display: inline-flex; align-items: center; padding: 0.7rem 1.4rem; border-radius: 999px; background: #4A2C17; color: #fff7ef; font-weight: 700; font-size: 0.97rem; text-decoration: none; box-shadow: 0 6px 18px rgba(74,44,23,0.35); transition: transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(74,44,23,0.48)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(74,44,23,0.35)'">
+                        Flash Sale Rules
+                    </a>
+                    {{-- Brown Sugar --}}
+                    <a href="{{ route('analytics.index') }}" style="display: inline-flex; align-items: center; padding: 0.7rem 1.4rem; border-radius: 999px; background: #B5743A; color: #fff7ef; font-weight: 700; font-size: 0.97rem; text-decoration: none; box-shadow: 0 6px 18px rgba(181,116,58,0.32); transition: transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(181,116,58,0.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(181,116,58,0.32)'">
+                        Sales Analytics
+                    </a>
                 </div>
             </div>
 
@@ -95,17 +106,24 @@
                 <div class="dashboard-list">
                     @foreach ($lowStockItems as $inventory)
                         <article class="dashboard-row">
-                            <div class="dashboard-main">
-                                <strong>{{ $inventory->product?->name }}</strong>
-                                <p class="product-copy">{{ $inventory->product?->category }}</p>
-                                <div class="dashboard-details">
-                                    <div class="dashboard-detail">
-                                        <span class="product-label">Stock</span>
-                                        <span class="product-value">{{ $inventory->quantity_on_hand }}</span>
-                                    </div>
-                                    <div class="dashboard-detail">
-                                        <span class="product-label">Reorder Level</span>
-                                        <span class="product-value">{{ $inventory->reorder_level }}</span>
+                            <div class="dashboard-main" style="display: flex; gap: 1rem; align-items: flex-start;">
+                                @if ($inventory->product?->image_path)
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($inventory->product->image_path) }}"
+                                         alt="{{ $inventory->product->name }}"
+                                         style="width: 48px; height: 48px; object-fit: cover; border-radius: 12px; border: 1px solid rgba(176,146,121,0.16); flex-shrink: 0; display: block;">
+                                @endif
+                                <div style="min-width: 0;">
+                                    <strong>{{ $inventory->product?->name }}</strong>
+                                    <p class="product-copy">{{ $inventory->product?->category }}</p>
+                                    <div class="dashboard-details">
+                                        <div class="dashboard-detail">
+                                            <span class="product-label">Stock</span>
+                                            <span class="product-value">{{ $inventory->quantity_on_hand }}</span>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <span class="product-label">Reorder Level</span>
+                                            <span class="product-value">{{ $inventory->reorder_level }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +150,13 @@
             @else
                 <div class="dashboard-list">
                     @foreach ($recentOrders as $order)
-                        <article class="dashboard-row">
+                        @php
+                            $rowClass = '';
+                            if ($order->order_status === 'payment_pending') $rowClass = 'dashboard-row-yellow';
+                            elseif (in_array($order->order_status, ['pending', 'baking'])) $rowClass = 'dashboard-row-red';
+                            elseif (in_array($order->order_status, ['ready', 'completed'])) $rowClass = 'dashboard-row-green';
+                        @endphp
+                        <article class="dashboard-row {{ $rowClass }}">
                             <div class="dashboard-main">
                                 <strong>{{ $order->order_number }}</strong>
                                 <p class="product-copy">{{ $order->customer?->name ?? 'Walk-in customer' }}</p>

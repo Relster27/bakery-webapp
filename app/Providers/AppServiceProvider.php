@@ -24,9 +24,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app['config']->set('view.compiled', $compiledViewPath);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //

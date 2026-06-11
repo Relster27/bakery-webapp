@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Return-Oriented Pastries' }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
@@ -61,7 +63,7 @@
         .shell {
             min-height: 100vh;
             position: relative;
-            overflow: hidden;
+            overflow: clip;
         }
 
         .shell::before,
@@ -170,7 +172,7 @@
             position: relative;
             z-index: 1;
             width: min(1180px, calc(100% - 1.25rem));
-            margin: 1.35rem auto 3.5rem;
+            margin: 1rem auto 3.5rem;
         }
 
         .hero,
@@ -203,7 +205,7 @@
             border-radius: 999px;
         }
 
-        .hero > * {
+        .hero>* {
             position: relative;
             z-index: 1;
         }
@@ -504,6 +506,17 @@
             border: 1px solid rgba(178, 95, 95, 0.2);
         }
 
+        .button-danger {
+            background: linear-gradient(135deg, #c95742, #a33d2c);
+            color: #fff;
+            border: none;
+            box-shadow: 0 14px 28px rgba(163, 61, 44, 0.2);
+        }
+
+        .button-danger:hover {
+            box-shadow: 0 18px 30px rgba(163, 61, 44, 0.24);
+        }
+
         .actions {
             display: flex;
             flex-wrap: wrap;
@@ -512,14 +525,14 @@
         }
 
         .auth-shell {
-            min-height: calc(100vh - 9rem);
+            min-height: calc(100vh - 12rem);
             display: grid;
             place-items: center;
-            padding: 2rem 0;
+            padding: 1rem 0;
         }
 
         .auth-card {
-            width: min(560px, 100%);
+            width: min(480px, 100%);
         }
 
         .auth-card .card {
@@ -564,6 +577,8 @@
 
         .product-main strong {
             font-size: 1.04rem;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         .product-copy {
@@ -872,6 +887,27 @@
             border-radius: 22px;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 243, 236, 0.92));
             border: 1px solid rgba(176, 146, 121, 0.16);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .dashboard-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 34, 18, 0.08);
+        }
+
+        .dashboard-row-yellow {
+            background: linear-gradient(180deg, rgba(255, 247, 214, 0.96), rgba(255, 238, 173, 0.92)) !important;
+            border-color: rgba(224, 186, 94, 0.5) !important;
+        }
+
+        .dashboard-row-red {
+            background: linear-gradient(180deg, rgba(255, 235, 235, 0.96), rgba(255, 214, 214, 0.92)) !important;
+            border-color: rgba(220, 140, 140, 0.45) !important;
+        }
+
+        .dashboard-row-green {
+            background: linear-gradient(180deg, rgba(232, 250, 232, 0.96), rgba(215, 245, 215, 0.92)) !important;
+            border-color: rgba(140, 200, 140, 0.45) !important;
         }
 
         .dashboard-main {
@@ -1162,7 +1198,7 @@
             align-items: end;
         }
 
-        .filter-bar > div {
+        .filter-bar>div {
             min-width: 160px;
             flex: 1 1 180px;
         }
@@ -1174,7 +1210,7 @@
 
         .report-row {
             display: grid;
-            grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(110px, 0.55fr));
+            grid-template-columns: minmax(0, 1.8fr) repeat(2, minmax(100px, 0.5fr));
             gap: 0.9rem;
             align-items: center;
             padding: 1rem;
@@ -1215,15 +1251,30 @@
             border: 1px solid rgba(176, 146, 121, 0.16);
         }
 
-        .order-row {
+        .order-row-card {
             display: grid;
-            grid-template-columns: minmax(0, 1.5fr) minmax(110px, 0.5fr) minmax(130px, 0.6fr) minmax(130px, 0.6fr) auto;
+            gap: 1.2rem;
+            padding: 1.25rem;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 243, 236, 0.94));
+            border: 1px solid rgba(176, 146, 121, 0.16);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(176, 146, 121, 0.1);
+            padding-bottom: 0.8rem;
+        }
+
+        .order-card-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 1rem;
             align-items: center;
-            padding: 1rem 1.05rem;
-            border-radius: 22px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 243, 236, 0.92));
-            border: 1px solid rgba(176, 146, 121, 0.16);
         }
 
         .row-actions {
@@ -1319,55 +1370,69 @@
                 grid-template-columns: 1fr;
             }
         }
+        .items-start { align-items: start; }
+        .h-fit { height: fit-content; }
     </style>
 </head>
+
 <body>
-<div class="shell">
-    <header class="topbar">
-        <div class="brand">
-            <strong>Return-Oriented Pastries</strong>
-            <span>Bakery Inventory & Ordering Management</span>
-        </div>
-        <nav class="nav">
-            @auth
-                <a href="{{ route('dashboard') }}">Dashboard</a>
-                <a href="{{ route('products.index') }}">Products</a>
-                <a href="{{ route('inventories.index') }}">Inventory</a>
-                <a href="{{ route('customers.index') }}">Customers</a>
-                <a href="{{ route('orders.index') }}">Orders</a>
-                <a href="{{ route('discounts.index') }}">Discounts</a>
-                <a href="{{ route('analytics.index') }}">Analytics</a>
-                <a href="{{ route('production-reports.index') }}">Reports</a>
-                <a href="{{ route('bakery.edit') }}">Bakery</a>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit">Logout</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}">Login</a>
-                <a class="primary" href="{{ route('register') }}">Register</a>
-            @endauth
-        </nav>
-    </header>
-
-    <main class="container">
-        @if (session('success'))
-            <div class="flash flash-success">{{ session('success') }}</div>
+    <div class="shell">
+        @if (!request()->routeIs('menu.*'))
+            <header class="topbar">
+                <div class="brand">
+                    <strong>Return-Oriented Pastries</strong>
+                    <span>Bakery Inventory & Ordering Management</span>
+                </div>
+                <nav class="nav">
+                    @auth
+                        @if(auth()->user()->is_platform_admin)
+                            <a href="{{ route('platform.dashboard') }}" style="background: linear-gradient(135deg, #1d3557, #457b9d); border-color: transparent;">Platform Admin</a>
+                        @else
+                            <a href="{{ route('dashboard') }}">Dashboard</a>
+                            <a href="{{ route('products.index') }}">Products</a>
+                            <a href="{{ route('inventories.index') }}">Inventory</a>
+                            <a href="{{ route('customers.index') }}">Customers</a>
+                            <a href="{{ route('orders.index') }}">Orders</a>
+                            <a href="{{ route('discounts.index') }}">Discounts</a>
+                            <a href="{{ route('analytics.index') }}">Analytics</a>
+                            <a href="{{ route('production-reports.index') }}">Reports</a>
+                            <a href="{{ route('bakery.edit') }}">Bakery</a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit">Logout</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}">Login</a>
+                        <a class="primary" href="{{ route('register') }}">Register</a>
+                    @endauth
+                </nav>
+            </header>
         @endif
 
-        @if ($errors->any())
-            <div class="flash flash-error">
-                <strong>Please fix these fields:</strong>
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+        <main class="container">
+            @if (session('success'))
+                <div class="flash flash-success">{{ session('success') }}</div>
+            @endif
 
-        @yield('content')
-    </main>
-</div>
+            @if (session('error'))
+                <div class="flash flash-error">{{ session('error') }}</div>
+            @endif
+
+            @if ($errors->any())
+                <div class="flash flash-error">
+                    <strong>Please fix these fields:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @yield('content')
+        </main>
+    </div>
 </body>
+
 </html>

@@ -14,9 +14,16 @@
             <div class="inventory-list">
                 @foreach ($inventories as $inventory)
                     <article class="inventory-row">
-                        <div class="product-main">
-                            <strong>{{ $inventory->product?->name }}</strong>
-                            <p class="product-copy">{{ $inventory->product?->category }}</p>
+                        <div class="product-main" style="display: flex; gap: 1rem; align-items: center;">
+                            @if ($inventory->product?->image_path)
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($inventory->product->image_path) }}"
+                                     alt="{{ $inventory->product->name }}"
+                                     style="width: 48px; height: 48px; object-fit: cover; border-radius: 12px; border: 1px solid rgba(176,146,121,0.16); flex-shrink: 0; display: block;">
+                            @endif
+                            <div style="min-width: 0;">
+                                <strong>{{ $inventory->product?->name }}</strong>
+                                <p class="product-copy">{{ $inventory->product?->category }}</p>
+                            </div>
                         </div>
 
                         <div class="product-meta">

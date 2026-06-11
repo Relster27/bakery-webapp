@@ -7,8 +7,12 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index()
     {
+        if (auth()->user()->is_platform_admin) {
+            return redirect()->route('platform.dashboard');
+        }
+
         $bakery = $this->currentBakery();
         $completedOrders = $bakery->orders()
             ->where('order_status', 'completed')
@@ -21,9 +25,9 @@ class DashboardController extends Controller
             'pending_orders' => $bakery->orders()->whereIn('order_status', ['pending', 'baking', 'ready'])->count(),
             'revenue_ledger' => $bakery->revenue_ledger,
             'active_discounts' => $bakery->discountRules()->where('is_active', true)->count(),
-            'custom_cake_requests' => $bakery->customCakeRequests()
-                ->whereDate('pickup_date', '>=', today()->toDateString())
-                ->whereIn('status', ['requested', 'reviewed', 'confirmed'])
+            'custom_cake_requests' => $bakery->orders()
+                ->where('order_type', 'custom_cake')
+                ->whereIn('order_status', ['pending', 'baking', 'ready'])
                 ->count(),
         ];
 
@@ -37,7 +41,7 @@ class DashboardController extends Controller
 
         $lowStockItems = $bakery->inventories()
             ->with('product')
-            ->whereColumn('quantity_on_hand', '<=', 'reorder_level')
+            ->atOrBelowReorderLevel()
             ->orderBy('quantity_on_hand')
             ->get();
 

@@ -67,4 +67,15 @@ class DiscountRuleController extends Controller
             ->route('discounts.index')
             ->with('success', 'Discount rule updated.');
     }
+
+    public function destroy(DiscountRule $discountRule): RedirectResponse
+    {
+        abort_unless($discountRule->bakery_id === $this->currentBakery()->id, 404);
+
+        $discountRule->delete();
+
+        return redirect()
+            ->route('discounts.index')
+            ->with('success', 'Discount rule deleted.');
+    }
 }

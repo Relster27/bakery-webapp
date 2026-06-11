@@ -11,6 +11,11 @@ abstract class Controller
     protected function currentBakery(): Bakery
     {
         $user = Auth::user();
+        
+        if ($user->is_platform_admin) {
+            abort(403, 'Platform Admins do not own a bakery.');
+        }
+
         $bakery = $user->bakery()->first();
 
         if ($bakery) {

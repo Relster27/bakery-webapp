@@ -49,7 +49,7 @@
 
                     <div>
                         <label for="pickup_date">Pickup Date</label>
-                        <input id="pickup_date" name="pickup_date" type="date" value="{{ old('pickup_date') }}" required>
+                        <input id="pickup_date" name="pickup_date" type="date" min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}" value="{{ old('pickup_date') }}" required>
                     </div>
 
                     <div>

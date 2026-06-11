@@ -1,417 +1,126 @@
-# Bakery Inventory & Ordering Web App
+# 🍞 Bakery Inventory & Ordering Web App
 
-This is a Laravel web application for a Software Engineering college project.
+A premium, modern Laravel & Vite web application designed for bakeries to manage their profile, products, live inventory, and orders with automated discount rules and a multi-method customer checkout system.
 
-The project folder is:
+---
 
-- `D:\SE\bakery-webapp`
 
-This README is written for a beginner. It explains exactly what to click, what to type, and why you are doing each step.
+## 🐳 Option A: Setup using Docker (Recommended & Zero Configuration)
 
-## What this app already has
+This is the fastest and cleanest way to run the web application. You do **not** need to install PHP, Composer, Node, or XAMPP on your computer.
 
-- Owner login and registration
-- Bakery profile page
-- Product and pricing management
-- Inventory tracking
-- Customer registration
-- Counter sale creation
-- Public pre-order page
-- Order status tracking
-- Order expiration with stock return
-- Revenue ledger on the dashboard
+### Prerequisites:
+1. Make sure **Docker Desktop** is installed and running on your computer. Download: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
 
-## Important idea before starting
+### Running the App:
+1. Open your terminal (PowerShell, Command Prompt, or Git Bash) inside the project folder.
+2. Build and start the entire stack:
+   ```bash
+   docker compose up --build
+   ```
+3. That's it! Docker will automatically:
+   *   Build the PHP + Apache image with all necessary packages.
+   *   Compile your frontend CSS & JS assets via Vite.
+   *   Wait for the MySQL database to become healthy.
+   *   Run all migrations (`migrate`) and populate the database with demo data (`db:seed`).
+   *   Create the public storage symlink (`storage:link`).
 
-This app needs 3 things to run:
+### URLs & Credentials (Docker):
+*   🍞 **Bakery App**: [http://localhost:8088](http://localhost:8088)
+*   🗄️ **phpMyAdmin (DB Browser)**: [http://localhost:8081](http://localhost:8081)
+*   🔑 **Demo Owner Login**:
+    *   **Email:** `owner@bakery.test`
+    *   **Password:** `password`
 
-- The project files in `D:\SE\bakery-webapp`
-- PHP and Composer
-- MySQL running from XAMPP
+### How to Stop Docker:
+*   To stop in the terminal: Press **`Ctrl` + `C`**
+*   To stop and clear cache/volumes:
+    ```bash
+    docker compose down -v
+    ```
 
-Laravel is the PHP framework used by this project.
+---
 
-MySQL is the database. A database is simply a place where the app stores data such as:
+## 💻 Option B: Classic Local Setup (Without Docker)
 
-- owner accounts
-- bakery profile
-- products
-- inventory stock
-- customers
-- orders
+If you prefer to run the application using XAMPP (Apache + MySQL) and local PHP/Node:
 
-When I say "create a database", I mean:
+### Prerequisites:
+1. **XAMPP** installed (Apache & MySQL active).
+2. **PHP 8.2+** installed on your system path.
+3. **Composer** installed.
+4. **Node.js (v18+) & npm** installed.
 
-- open XAMPP tools
-- create an empty container in MySQL
-- give that container the name `bakery_webapp`
-- then let Laravel create all the tables inside it automatically
+### Setup Steps:
+1. **Clone & Open Project Folder**:
+   ```powershell
+   cd C:\Users\Wilson Tjokro\Downloads\bakery-webapp
+   ```
+2. **Install PHP & Node Packages**:
+   ```powershell
+   composer install
+   npm install
+   ```
+3. **Configure Environment File**:
+   *   Duplicate `.env.example` and rename it to `.env`
+   *   Open `.env` and verify your local MySQL credentials:
+       ```env
+       DB_CONNECTION=mysql
+       DB_HOST=127.0.0.1
+       DB_PORT=3306
+       DB_DATABASE=bakery_webapp
+       DB_USERNAME=root
+       DB_PASSWORD=
+       ```
+4. **Create Empty Database**:
+   *   Open XAMPP Control Panel and start **Apache** and **MySQL**.
+   *   Go to `http://localhost/phpmyadmin` and create a new empty database named `bakery_webapp` (Collation: `utf8mb4_unicode_ci`).
+5. **Generate App Security Key**:
+   ```powershell
+   php artisan key:generate
+   ```
+6. **Migrate & Seed Database**:
+   ```powershell
+   php artisan migrate:fresh --seed
+   ```
+7. **Link Storage (for product images)**:
+   ```powershell
+   php artisan storage:link
+   ```
+8. **Compile Frontend Assets**:
+   ```powershell
+   npm run build
+   ```
+9. **Start Server**:
+   ```powershell
+   php artisan serve
+   ```
+   Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser and log in using:
+   *   **Email:** `owner@bakery.test`
+   *   **Password:** `password`
 
-You do not need to manually create tables one by one. Laravel will do that for you.
+---
 
-## Before you start
 
-Make sure these are true:
+## 🛠️ Troubleshooting
 
-1. XAMPP is installed.
-2. PHP works in terminal.
-3. Composer works in terminal.
-4. This project is already in `D:\SE\bakery-webapp`.
-
-If you want to check PHP and Composer, open PowerShell and run:
-
+### 1. Stock / Product images are missing:
+Make sure to create the storage link:
 ```powershell
-php -v
-composer --version
+php artisan storage:link
 ```
+If using Docker, this is done automatically! The seed image copies are preserved and loaded on your first spin.
 
-If both commands print version information, that part is okay.
-
-## Step 1: Open the project folder
-
-Open PowerShell.
-
-Then go into the project folder:
-
-```powershell
-cd D:\SE\bakery-webapp
-```
-
-After that, every command in this README should be run from that folder.
-
-## Step 2: Start XAMPP
-
-1. Open `XAMPP Control Panel`.
-2. Find the row named `Apache`.
-3. Click `Start`.
-4. Find the row named `MySQL`.
-5. Click `Start`.
-
-What you should see:
-
-- Apache status becomes active
-- MySQL status becomes active
-- usually the row becomes green
-
-If MySQL does not start, the database part of the app will not work.
-
-## Step 3: Create the MySQL database
-
-This is the part you asked about.
-
-You need to create one empty database named `bakery_webapp`.
-
-The easiest way is with phpMyAdmin.
-
-### Method A: Create database using phpMyAdmin
-
-1. Make sure `Apache` and `MySQL` are already started in XAMPP.
-2. Open your browser.
-3. Go to:
-
-```text
-http://localhost:8080/phpmyadmin
-```
-
-4. Look for a button or menu named `New` on the left side.
-5. Click `New`.
-6. In the field for database name, type:
-
-```text
-bakery_webapp
-```
-
-7. For collation, if phpMyAdmin asks, choose:
-
-```text
-utf8mb4_unicode_ci
-```
-
-8. Click `Create`.
-
-After that, the database exists.
-
-Very important:
-
-- You are only creating the database container here.
-- The tables such as `products`, `orders`, and `customers` are not created yet.
-- Laravel will create those tables in a later step using migrations.
-
-### Method B: Create database using SQL tab in phpMyAdmin
-
-If you prefer SQL:
-
-1. Open `http://localhost/phpmyadmin`
-2. Click `SQL`
-3. Paste this:
-
-```sql
-CREATE DATABASE bakery_webapp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-4. Click `Go`
-
-Either Method A or Method B is enough. You do not need both.
-
-## Step 4: Check the `.env` file
-
-The file `.env` stores local settings for your computer.
-
-Open this file:
-
-- `D:\SE\bakery-webapp\.env`
-
-Make sure the database section looks like this:
-
+### 2. "Access denied for user 'root'" (Local Setup):
+Double-check your MySQL configuration in `.env`. If you have a custom MySQL password set up in XAMPP, you must define it in `.env` as:
 ```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=bakery_webapp
-DB_USERNAME=root
-DB_PASSWORD=
+DB_PASSWORD=your_mysql_password
 ```
-
-What each line means:
-
-- `DB_CONNECTION=mysql`
-  Laravel should use MySQL, not SQLite.
-- `DB_HOST=127.0.0.1`
-  MySQL is running on your own computer.
-- `DB_PORT=3306`
-  This is the default MySQL port in XAMPP.
-- `DB_DATABASE=bakery_webapp`
-  This must match the database name you created in phpMyAdmin.
-- `DB_USERNAME=root`
-  XAMPP usually uses `root` by default.
-- `DB_PASSWORD=`
-  Empty means no password. This is normal for many XAMPP setups.
-
-If your XAMPP MySQL uses a password, put it after `DB_PASSWORD=`.
-
-Example:
-
-```env
-DB_PASSWORD=123456
-```
-
-## Step 5: Generate the application key
-
-In PowerShell, still inside `D:\SE\bakery-webapp`, run:
-
-```powershell
-php artisan key:generate
-```
-
-What this does:
-
-- Laravel needs a secret key for sessions and encryption.
-- This command writes that key into `.env`.
-
-What you should expect:
-
-- a success message
-- no error
-
-## Step 6: Create the tables and sample data
-
-Now run:
-
-```powershell
-php artisan migrate:fresh --seed
-```
-
-This is one of the most important commands.
-
-What it does:
-
-- `migrate`
-  creates database tables
-- `fresh`
-  first deletes old tables if they already exist
-- `seed`
-  inserts sample data for testing
-
-In simple words:
-
-- Laravel will build the database structure for you
-- then Laravel will insert demo data so the app is not empty
-
-The command should create tables like:
-
-- `users`
-- `bakeries`
-- `products`
-- `inventories`
-- `customers`
-- `orders`
-- `order_items`
-
-It will also insert demo data, including a demo owner account.
-
-If this command finishes without error, the database part is ready.
-
-## Step 7: Start the Laravel server
-
-Run:
-
-```powershell
-php artisan serve
-```
-
-What this does:
-
-- starts a local development web server
-- gives you a local URL to open in your browser
-
-Usually Laravel will show something like:
-
-```text
-Server running on [http://127.0.0.1:8000]
-```
-
-Leave that PowerShell window open.
-
-If you close it, the local server stops.
-
-## Step 8: Open the app in your browser
-
-Open:
-
-```text
-http://127.0.0.1:8000
-```
-
-The app should redirect you to the login page.
-
-## Step 9: Login using the demo account
-
-After `php artisan migrate:fresh --seed`, you can use this account:
-
-- Email: `owner@bakery.test`
-- Password: `password`
-
-If login works, the setup is successful.
-
-## Step 10: Important pages inside the app
-
-After login, these pages matter most:
-
-- `/dashboard`
-  owner summary page
-- `/products`
-  manage bakery menu and prices
-- `/inventories`
-  manage stock numbers
-- `/customers`
-  manage customer data
-- `/orders`
-  create and track orders
-- `/bakery/edit`
-  bakery profile page
-
-Public ordering page after seeding:
-
-- `/menu/morning-crumbs-demo`
-
-Full example link:
-
-```text
-http://127.0.0.1:8000/menu/morning-crumbs-demo
-```
-
-That page is the public customer link you can share directly.
-
-## One full example from zero
-
-If you want the shortest exact sequence, this is it:
-
-1. Open XAMPP.
-2. Start Apache.
-3. Start MySQL.
-4. Open `http://localhost/phpmyadmin`.
-5. Create a database named `bakery_webapp`.
-6. Open PowerShell.
-7. Run:
-
-```powershell
-cd D:\SE\bakery-webapp
-php artisan key:generate
-php artisan migrate:fresh --seed
-php artisan serve
-```
-
-8. Open `http://127.0.0.1:8000`
-9. Login with:
-   `owner@bakery.test`
-   `password`
-
-## If something goes wrong
-
-### Problem: `php artisan migrate:fresh --seed` fails
-
-Check these first:
-
-1. Is MySQL running in XAMPP?
-2. Did you create the database `bakery_webapp`?
-3. Does `.env` have the same database name?
-4. Is `DB_USERNAME` correct?
-5. Is `DB_PASSWORD` correct for your XAMPP setup?
-
-### Problem: `php artisan serve` works but browser shows error
-
-Try:
-
-```powershell
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
-php artisan serve
-```
-
-### Problem: "Access denied for user 'root'"
-
-That means MySQL username or password is wrong.
-
-Open `.env` and fix:
-
-- `DB_USERNAME`
-- `DB_PASSWORD`
-
-Then run:
-
+Followed by clearing cache and running migrations:
 ```powershell
 php artisan config:clear
 php artisan migrate:fresh --seed
 ```
 
-### Problem: port already in use
-
-If Laravel says port `8000` is busy, run:
-
-```powershell
-php artisan serve --port=8080
-```
-
-Then open:
-
-```text
-http://127.0.0.1:8080
-```
-
-## Notes about data
-
-- Product stock is reduced automatically when an order is created.
-- Expiring a pre-order returns stock to inventory.
-- Counter sales are marked as completed immediately.
-- Pre-orders start as pending and can move to baking, ready, and completed.
-
-## Files you may need to open often
-
-- `D:\SE\bakery-webapp\.env`
-- `D:\SE\bakery-webapp\README.md`
-- `D:\SE\bakery-webapp\routes\web.php`
-
-## If you want the next help
-
-If you get stuck on any single step, tell me exactly which step number failed and copy the error message. Then I can help from that exact point instead of guessing.
+### 3. Port conflict with XAMPP:
+If you are running the Docker environment and XAMPP is already active on your machine, MySQL (port 3306) and Apache (port 80) might clash. Stop Apache and MySQL in XAMPP first before starting `docker compose up --build`. (Our docker setup is preconfigured to use ports `8088` and `3307` to minimize conflict, but stopping XAMPP remains best practice).

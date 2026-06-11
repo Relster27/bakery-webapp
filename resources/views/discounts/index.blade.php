@@ -90,13 +90,21 @@
                                 <span class="badge {{ $rule->is_active ? '' : 'badge-muted' }}">{{ $rule->is_active ? 'ACTIVE' : 'PAUSED' }}</span>
                             </div>
 
-                            <div class="row-actions">
+                            <div class="row-actions" style="display: flex; gap: 0.5rem;">
                                 <form action="{{ route('discounts.update', $rule) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="is_active" value="{{ $rule->is_active ? 0 : 1 }}">
                                     <button class="button-inline {{ $rule->is_active ? 'button-secondary' : '' }}" type="submit">
                                         {{ $rule->is_active ? 'Pause Rule' : 'Activate Rule' }}
+                                    </button>
+                                </form>
+
+                                <form action="{{ route('discounts.destroy', $rule) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this rule?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="button-inline" type="submit" style="color: var(--danger); border-color: var(--danger);">
+                                        Delete
                                     </button>
                                 </form>
                             </div>
